@@ -191,3 +191,40 @@ void spellchecker :: replace_wrong_spell(string file_name){
     cout << "all spell corrected\n";
     return;
 }
+
+int spellchecker :: checking_file(string filename){
+    int count = 0;
+    ifstream input;
+    input.open(filename);
+    if(!input.is_open()){
+        cerr << " -> Error: Unable to open input file: <- " << filename << endl;
+        return -1;
+    }
+
+    char c;
+    string word = "";
+    while (input.get(c))
+    {
+        if(c == EOF)
+        break;
+
+        if(c >= 'a' && c <= 'z')
+            word += c;
+        else if(c >= 'A' && c <= 'Z')
+            word += (c + 32);
+        else if(word != ""){
+            if(is_in_dictionary(word))
+                cout << word << c;
+            else{
+                cout << underlineON << word << underlineOFF << c;   
+                count++;
+            }
+            word = "";
+        }
+        else
+            cout << c;
+        
+    }
+    cout << endl;
+    return count;
+}
