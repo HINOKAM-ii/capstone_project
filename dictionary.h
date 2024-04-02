@@ -75,3 +75,71 @@ void spellchecker :: insert_dictionary(string dictionary_name){
 
     cout << " - dictionary is not found\n";
 }
+
+void spellchecker :: replace_wrong_spell(string file_name){
+    
+    ifstream input(file_name);
+
+    if (!input.is_open()) {
+        cerr << " -> Error: Unable to open input file: <- " << file_name << endl;
+        return;
+    }
+
+    ofstream tmp("tmp.txt");
+    if (!tmp.is_open()) {
+        cerr << " -> Error: Unable to create temporary file. <- " << endl;
+        input.close();
+        return;
+    }
+
+    char c;
+    string word = "";
+    while (input.get(c)) {
+        if(c >= 'a' && c <= 'z')
+            word += c;
+        else if(c >= 'A' && c <= 'Z')
+            word += (c + 32);
+        else if(word != ""){
+            if(is_in_dictionary(word)){
+                tmp << word << c;
+            }
+            else{
+                cout << " - Mistake in the word " << underlineON << word << underlineOFF << endl;
+                vector<string> suggestions = suggestion(word);
+                if(suggestions.empty()){
+                    cout << " - No suggestions found in dictionary." << endl;
+                }
+                else{
+                    int i = 0;
+                    cout << " - We found these suggestions for you:" << endl;
+                    while(i != suggestions.size()){
+                        cout << i + 1 << " " << suggestions[i] << endl;
+                        i++;
+                    }
+
+                    cout << " ~> Choose any of them or enter 0 to keep the word unchanged: ";
+                    cin >> i;
+
+                    if(i == 0){
+                        cout << " - no changes\n";
+                        tmp << word << c;
+                    }
+                    else{
+                        tmp << suggestions[i-1] << c;
+                    }
+                }
+            }
+            word = "";
+        }
+        else{
+            tmp << c;
+        }
+    }
+    
+    input.close();
+    tmp.close();
+    remove(file_name.c_str());
+    rename("tmp.txt", file_name.c_str());
+    cout << "all spell corrected\n";
+    return;
+}
