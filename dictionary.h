@@ -76,6 +76,12 @@ void spellchecker :: insert_dictionary(string dictionary_name){
     cout << " - dictionary is not found\n";
 }
 
+
+bool spellchecker :: is_in_dictionary(string word){
+    return dictionary[word];
+}
+
+
 void spellchecker :: replace_wrong_spell(string file_name){
     
     ifstream input(file_name);
