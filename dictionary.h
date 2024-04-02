@@ -19,3 +19,12 @@ class spellchecker{
     spellchecker();
 
 };
+
+
+spellchecker :: spellchecker(){
+    insert_dictionary("dictionary.txt");
+}
+
+void spellchecker :: insert_spell(string word){
+    dictionary[word] = true;
+} 
