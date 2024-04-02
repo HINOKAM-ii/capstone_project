@@ -3,6 +3,8 @@
 
 using namespace std;
 
+int Distance(const string& str1 , const string& str2);
+
 class spellchecker{
     map<string,bool> dictionary;
     string main_dictionary = "dictionary.txt";
@@ -76,11 +78,51 @@ void spellchecker :: insert_dictionary(string dictionary_name){
     cout << " - dictionary is not found\n";
 }
 
-
 bool spellchecker :: is_in_dictionary(string word){
     return dictionary[word];
 }
 
+vector<string> spellchecker :: suggestion(string MisSpellWord){
+
+    vector<pair<int,string>> suggestion_word;
+
+    ifstream input_word;
+    input_word.open(main_dictionary);
+
+    vector<string> final_suggestion;
+
+    if(input_word.is_open()){
+        
+        cout << " - dictionary open successfully\n";
+        string word;
+
+        while (getline(input_word,word)){
+            int k = Distance(word , MisSpellWord);
+            if(k < 4)
+                suggestion_word.push_back({k,word});
+
+        }
+        input_word.close();
+
+        sort(suggestion_word.begin() , suggestion_word.end());
+        
+        cout << " - suggestion sorted properly\n";
+
+        for (int i = 0; i <= suggestion_word.size() ; i++)
+        {
+            if(i > 2)
+                break;
+            final_suggestion.push_back(suggestion_word[i].second);
+        }
+
+        if(suggestion_word.empty())
+            cout << " - zero suggestion\n";
+        return final_suggestion;
+    }
+
+    cout << " - dictionary is not found\n";
+    return final_suggestion;
+}
 
 void spellchecker :: replace_wrong_spell(string file_name){
     
