@@ -54,3 +54,24 @@ int Distance(const string& str1 , const string& str2){
     
     return dis[n][m];
 }
+
+void spellchecker :: insert_dictionary(string dictionary_name){
+    ifstream input_word;
+    input_word.open(dictionary_name);
+
+    if(input_word.is_open()){
+        
+        cout << " - dictionary open successfully\n";
+        string word;
+
+        while (getline(input_word,word)){
+            insert_spell(word);
+        }
+        
+        input_word.close();
+        cout << " - dictionary added successfully\n";
+        return;
+    }
+
+    cout << " - dictionary is not found\n";
+}
