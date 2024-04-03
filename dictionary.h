@@ -18,6 +18,9 @@ class spellchecker{
     vector<string> suggestion(string MisSpellWord);
     int checking_file(string filename);
 
+    void insert_shortcut_word(string key , string ans);
+    void insert_shortcut_file(string shortcut_filename);
+
     spellchecker();
 
 };
@@ -227,4 +230,37 @@ int spellchecker :: checking_file(string filename){
     }
     cout << endl;
     return count;
+}
+
+void spellchecker :: insert_shortcut_word(string key , string ans){
+    ofstream file(shortcut_location, ios::app);
+
+    if (file.is_open()) {
+        file << key << endl;
+        file << ans << endl;
+
+        // Close the file
+        file.close();
+
+        cout << greenlineON <<" ~> shortcut added successfully." << greenlineOFF << endl;
+    } else {
+        cout << redlineON <<"Unable to add shortcut" << redlineOFF << endl;
+    }
+    short_cut[key] = ans;
+}
+
+
+void spellchecker :: insert_shortcut_file(string shortcut_filename){
+    ifstream shortcutfile;
+    shortcutfile.open(shortcut_filename);
+
+    string key_word,ans_word;
+
+    while (getline(shortcutfile,key_word)){
+        getline(shortcutfile,ans_word);
+        short_cut[key_word] = ans_word;
+    }
+    
+    shortcutfile.close();
+    return;
 }
