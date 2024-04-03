@@ -6,6 +6,8 @@ int main()
     // create object of class and call constructor
     spellchecker f1;
 
+    f1.insert_shortcut_word("tnx","thanks");
+    
     // Get input file name from user
     cout << "Enter File Name to check spelling\n";
     string file_name;
