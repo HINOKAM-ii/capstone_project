@@ -20,7 +20,8 @@ class spellchecker{
 
     void insert_shortcut_word(string key , string ans);
     void insert_shortcut_file(string shortcut_filename);
-
+    bool is_in_shortcut(string word);
+    string replace_shortcut(string word);
     spellchecker();
 
 };
@@ -263,4 +264,16 @@ void spellchecker :: insert_shortcut_file(string shortcut_filename){
     
     shortcutfile.close();
     return;
+}
+
+string spellchecker :: replace_shortcut(string word){
+    return short_cut[word];
+}
+
+bool spellchecker :: is_in_shortcut(string word){
+    if(short_cut[word] != ""){
+        return true;
+    }
+
+    return false;
 }
