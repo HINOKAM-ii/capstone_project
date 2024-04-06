@@ -139,28 +139,33 @@ vector<string> spellchecker::suggestion(const string &MisSpellWord) {
 }
 
 
+//function definition of checking file
 int spellchecker :: checking_file(const string& filename){
-    int count = 0;
-    ifstream input;
-    input.open(filename);
+
+    int count = 0; // declare count variable to count wronge spell
+
+    ifstream input; // ifstream class variable for read input file
+    input.open(filename); // open input file
+
     if(!input.is_open()){
         cerr << redlineON <<" -> Error: Unable to open input file: <- " << filename << redlineOFF <<endl;
-        return -1;
+        return -1; // if not open then give error and return -1
     }
 
     char c;
-    string word = "";
+    string word = ""; // declare necessary variable
+
     while (input.get(c))
     {
-        if(c == EOF)
+        if(c == EOF) // loop break at END OF FILE 
         break;
 
         if(c >= 'a' && c <= 'z')
             word += c;
-        else if(c >= 'A' && c <= 'Z')
+        else if(c >= 'A' && c <= 'Z') // convert upper case to lower
             word += (c + 32);
         else if(word != ""){
-            if(is_in_dictionary(word))
+            if(is_in_dictionary(word)) // check if word is in dectionary or not
                 cout << word << c;
             else{
                 cout << underlineON << word << underlineOFF << c;   
@@ -173,9 +178,11 @@ int spellchecker :: checking_file(const string& filename){
         
     }
     cout << endl;
-    return count;
+    return count; // return count of misspelled word
 }
 
+
+//function definition of replace wrong and short cut spell
 void spellchecker :: replace_spell(const string& file_name){
     
     ifstream input(file_name);
