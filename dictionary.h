@@ -1,145 +1,193 @@
 #include<bits/stdc++.h>
 #include"HIGHLIGHT.h"
-
 using namespace std;
 
+
+//declare function for calculation edit distance of two string
 int Distance(const string& str1 , const string& str2);
 
-class spellchecker{
-    map<string,bool> dictionary;
-    string main_dictionary = "dictionary.txt";
 
+//class definition for spellchecker
+class spellchecker{
+    unordered_map<string,bool> dictionary; // diclare unorder map to store dictionary
+    unordered_map<string,string> short_cut; // diclare unorder map to store short cut
+
+    string main_dictionary = "dictionary.txt";  // main dictionary name/location
+    string shortcut_location = "shortcut.txt";  // shortcut file name/location
     public:
 
-    void insert_dictionary(string dictionary_name);
-    void insert_spell(string word);
-    bool is_in_dictionary(string word);
-    void replace_wrong_spell(string file_name);
-    vector<string> suggestion(string MisSpellWord);
-    int checking_file(string filename);
+    spellchecker(); //constructor
 
-    void insert_shortcut_word(string key , string ans);
-    void insert_shortcut_file(string shortcut_filename);
-    bool is_in_shortcut(string word);
-    string replace_shortcut(string word);
-    spellchecker();
+    //    --- spell checker ---
+
+    void insert_spell(const string& word);  //function to add word to store in dictionary
+
+    void insert_dictionary(const string& dictionary_name);  // function to add whole dictionary
+
+    bool is_in_dictionary(const string& word); // function to check that given word is in dictionary
+
+    int checking_file(const string& filename); // function to check whole file
+
+    void replace_spell(const string& file_name); // funtion to replace wrong and short cut word
+
+    vector<string> suggestion(const string& MisSpellWord); // function to get nearest word
+
+
+    //    --- short cut ---
+
+    void insert_shortcut_word(const string& key , const string& ans); // function to insert one word to short cut list
+
+    void insert_shortcut_file(const string& shortcut_filename); // function to insert whole short cut file
+
+    bool is_in_shortcut(const string& word); // function to check shortcut is in list
+
+    string replace_shortcut(const string& word); // function to give full form of short cut word
 
 };
 
-
+// constructor definition
 spellchecker :: spellchecker(){
-    insert_dictionary("dictionary.txt");
+
+    insert_dictionary(main_dictionary); // call insert dictionary function to insert main dictionay
+
+    insert_shortcut_file(shortcut_location); // call insert short cut function to add all short cuts
+
 }
 
-void spellchecker :: insert_spell(string word){
+
+//function definition of insert spell
+void spellchecker :: insert_spell(const string& word){
     dictionary[word] = true;
 } 
 
-int Distance(const string& str1 , const string& str2){
-    int n = str1.size();
-    int m = str2.size();
 
-    int dis[n+1][m+1];
+//function definition of insert dictionary
+void spellchecker :: insert_dictionary(const string& dictionary_name){
+    ifstream input_word; // ifstream class variable for read dictionary
 
-    for(int i = 0 ; i <= n ; i++) dis[i][0] = i;   
-       
-    for(int i = 0 ; i <= m ; i++) dis[0][i] = i;
-
-    for (int i = 1; i <= n; i++){
-
-        for (int j = 1; j <= m; j++){
-            if(str1[i] == str2[j])
-                dis[i][j] = dis[i-1][j-1];
-            else{
-                dis[i][j] = 1 + min( { dis[i-1][j] ,
-                                       dis[i][j-1] ,
-                                       dis[i-1][j-1] } );
-            }
-        }
-    }
-    
-    return dis[n][m];
-}
-
-void spellchecker :: insert_dictionary(string dictionary_name){
-    ifstream input_word;
-    input_word.open(dictionary_name);
+    input_word.open(dictionary_name);// open dictionary
 
     if(input_word.is_open()){
         
-        cout << " - dictionary open successfully\n";
+        cout << greenlineON <<" - dictionary open successfully\n" << greenlineOFF;
         string word;
 
         while (getline(input_word,word)){
-            insert_spell(word);
+            insert_spell(word); // insert every spell one by one
         }
         
         input_word.close();
-        cout << " - dictionary added successfully\n";
+        cout << greenlineON <<" - dictionary added successfully\n" << greenlineOFF;
         return;
     }
 
-    cout << " - dictionary is not found\n";
+    cout << redlineON <<" - dictionary is not found\n" << redlineOFF;
 }
 
-bool spellchecker :: is_in_dictionary(string word){
+//function definition of is in dictionary
+bool spellchecker :: is_in_dictionary(const string& word){
     return dictionary[word];
 }
 
-vector<string> spellchecker :: suggestion(string MisSpellWord){
+//function definition of suggestion
+vector<string> spellchecker::suggestion(const string &MisSpellWord) {
 
-    vector<pair<int,string>> suggestion_word;
+  vector<pair<int, string>> suggestion_word; // make pair variable for to store priorty and word
 
-    ifstream input_word;
-    input_word.open(main_dictionary);
+  ifstream input_word; // ifstream class variable for read dictionary
 
-    vector<string> final_suggestion;
+  input_word.open(main_dictionary); // open main dictionary
 
-    if(input_word.is_open()){
-        
-        cout << " - dictionary open successfully\n";
-        string word;
+  vector<string> final_suggestion; // vector variable to store final suggested words 
 
-        while (getline(input_word,word)){
-            int k = Distance(word , MisSpellWord);
-            if(k < 4)
-                suggestion_word.push_back({k,word});
+  if (input_word.is_open()) {
+    cout << greenlineON <<" - dictionary open successfully\n" << greenlineOFF;
+    string word;
 
+    while (getline(input_word, word)) {
+      int distance = Distance(word, MisSpellWord); // call distance function to calculate edit distance of misspellword and dictionary word
+      int matching_chars = 0;
+
+      for (int i = 0; i < min(2, (int)word.size()) && i < min(2, (int)MisSpellWord.size()); ++i) {
+        if (isupper(word[i]) && word[i] == MisSpellWord[i]) {
+          matching_chars++;
         }
-        input_word.close();
+      }
 
-        sort(suggestion_word.begin() , suggestion_word.end());
-        
-        cout << " - suggestion sorted properly\n";
-
-        for (int i = 0; i <= suggestion_word.size() ; i++)
-        {
-            if(i > 2)
-                break;
-            final_suggestion.push_back(suggestion_word[i].second);
-        }
-
-        if(suggestion_word.empty())
-            cout << " - zero suggestion\n";
-        return final_suggestion;
+      int priority = distance * 10 - matching_chars; // give priorty to every word
+      suggestion_word.push_back({priority, word}); // push priorty and word in suggestion pair
     }
 
-    cout << " - dictionary is not found\n";
-    return final_suggestion;
+    input_word.close(); // close main dictionary
+
+    sort(suggestion_word.begin(), suggestion_word.end()); // sort acrroding to priority
+
+    cout << " - suggestion sorted properly\n";
+
+    for (int i = 0; i < min(5, (int)suggestion_word.size()); ++i) {
+      final_suggestion.push_back(suggestion_word[i].second);
+    }
+
+    if (suggestion_word.empty()) {
+      cout << " - zero suggestion\n"; 
+    }
+  } else {
+    cout << redlineON <<" - dictionary is not open\n" << redlineOFF; // if dictionary not open
+  }
+
+  return final_suggestion; // return final suggestion words
 }
 
-void spellchecker :: replace_wrong_spell(string file_name){
+
+int spellchecker :: checking_file(const string& filename){
+    int count = 0;
+    ifstream input;
+    input.open(filename);
+    if(!input.is_open()){
+        cerr << redlineON <<" -> Error: Unable to open input file: <- " << filename << redlineOFF <<endl;
+        return -1;
+    }
+
+    char c;
+    string word = "";
+    while (input.get(c))
+    {
+        if(c == EOF)
+        break;
+
+        if(c >= 'a' && c <= 'z')
+            word += c;
+        else if(c >= 'A' && c <= 'Z')
+            word += (c + 32);
+        else if(word != ""){
+            if(is_in_dictionary(word))
+                cout << word << c;
+            else{
+                cout << underlineON << word << underlineOFF << c;   
+                count++;
+            }
+            word = "";
+        }
+        else
+            cout << c;
+        
+    }
+    cout << endl;
+    return count;
+}
+
+void spellchecker :: replace_spell(const string& file_name){
     
     ifstream input(file_name);
 
     if (!input.is_open()) {
-        cerr << " -> Error: Unable to open input file: <- " << file_name << endl;
+        cerr << redlineON <<" -> Error: Unable to open input file: <- " << file_name << redlineOFF << endl;
         return;
     }
 
     ofstream tmp("tmp.txt");
     if (!tmp.is_open()) {
-        cerr << " -> Error: Unable to create temporary file. <- " << endl;
+        cerr << redlineON <<" -> Error: Unable to create temporary file. <- "<< redlineOFF << endl;
         input.close();
         return;
     }
@@ -152,7 +200,24 @@ void spellchecker :: replace_wrong_spell(string file_name){
         else if(c >= 'A' && c <= 'Z')
             word += (c + 32);
         else if(word != ""){
-            if(is_in_dictionary(word)){
+            if(is_in_shortcut(word)){
+                string stword = replace_shortcut(word);
+                cout << " - Do you want to replace " << word << " with " << stword << "?" << endl;
+                int ch;
+                cout << " ~> if yes then press 1 or press 0\n";
+                cin >> ch;
+                if(ch == 1){
+                    tmp << stword << c;
+                    cout << " - change sucseffuly\n";
+                }else if(ch == 0){
+                    tmp << word << c;
+                    cout << " - no change happen\n";
+                }else{
+                    cout << redlineON << " ~> somthing wrong no change happen. " << redlineOFF << endl;
+                    tmp << word << c;
+                }
+            }
+            else if(is_in_dictionary(word)){
                 tmp << word << c;
             }
             else{
@@ -196,50 +261,15 @@ void spellchecker :: replace_wrong_spell(string file_name){
     return;
 }
 
-int spellchecker :: checking_file(string filename){
-    int count = 0;
-    ifstream input;
-    input.open(filename);
-    if(!input.is_open()){
-        cerr << " -> Error: Unable to open input file: <- " << filename << endl;
-        return -1;
-    }
-
-    char c;
-    string word = "";
-    while (input.get(c))
-    {
-        if(c == EOF)
-        break;
-
-        if(c >= 'a' && c <= 'z')
-            word += c;
-        else if(c >= 'A' && c <= 'Z')
-            word += (c + 32);
-        else if(word != ""){
-            if(is_in_dictionary(word))
-                cout << word << c;
-            else{
-                cout << underlineON << word << underlineOFF << c;   
-                count++;
-            }
-            word = "";
-        }
-        else
-            cout << c;
-        
-    }
-    cout << endl;
-    return count;
-}
-
-void spellchecker :: insert_shortcut_word(string key , string ans){
+void spellchecker :: insert_shortcut_word(const string& key , const string& ans){
     ofstream file(shortcut_location, ios::app);
 
     if (file.is_open()) {
         file << key << endl;
         file << ans << endl;
 
+        if(short_cut[key] == "")
+            short_cut[key] = ans;
         // Close the file
         file.close();
 
@@ -247,11 +277,9 @@ void spellchecker :: insert_shortcut_word(string key , string ans){
     } else {
         cout << redlineON <<"Unable to add shortcut" << redlineOFF << endl;
     }
-    short_cut[key] = ans;
 }
 
-
-void spellchecker :: insert_shortcut_file(string shortcut_filename){
+void spellchecker :: insert_shortcut_file(const string& shortcut_filename){
     ifstream shortcutfile;
     shortcutfile.open(shortcut_filename);
 
@@ -266,14 +294,44 @@ void spellchecker :: insert_shortcut_file(string shortcut_filename){
     return;
 }
 
-string spellchecker :: replace_shortcut(string word){
+string spellchecker :: replace_shortcut(const string& word){
     return short_cut[word];
 }
 
-bool spellchecker :: is_in_shortcut(string word){
+bool spellchecker :: is_in_shortcut(const string& word){
     if(short_cut[word] != ""){
         return true;
     }
 
     return false;
 }
+
+
+//write definition of distance based of Levenshtein algorithm
+int Distance(const string& str1 , const string& str2){
+    int n = str1.size();
+    int m = str2.size();
+
+    int dis[n+1][m+1]; // declare array for dynamic programming
+
+    for(int i = 0 ; i <= n ; i++) dis[i][0] = i;   
+       
+    for(int i = 0 ; i <= m ; i++) dis[0][i] = i;
+
+    for (int i = 1; i <= n; i++){
+
+        for (int j = 1; j <= m; j++){
+            if(str1[i - 1] == str2[j - 1]) 
+                dis[i][j] = dis[i-1][j-1];
+            else{
+                dis[i][j] = 1 + min( { dis[i-1][j] ,
+                                       dis[i][j-1] ,
+                                       dis[i-1][j-1] } );
+            }
+        }
+    }
+    
+    return dis[n][m];
+}
+
+
