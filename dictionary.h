@@ -276,15 +276,17 @@ void spellchecker :: replace_spell(const string& file_name){
     return;
 }
 
+
+//function definition of insert shortcut word
 void spellchecker :: insert_shortcut_word(const string& key , const string& ans){
-    ofstream file(shortcut_location, ios::app);
+    ofstream file(shortcut_location, ios::app); // open file with append mode
 
     if (file.is_open()) {
         file << key << endl;
         file << ans << endl;
 
         if(short_cut[key] == "")
-            short_cut[key] = ans;
+            short_cut[key] = ans; // added to shortcut
         // Close the file
         file.close();
 
@@ -296,7 +298,7 @@ void spellchecker :: insert_shortcut_word(const string& key , const string& ans)
 
 void spellchecker :: insert_shortcut_file(const string& shortcut_filename){
     ifstream shortcutfile;
-    shortcutfile.open(shortcut_filename);
+    shortcutfile.open(shortcut_filename); // open shortcut file
 
     string key_word,ans_word;
 
@@ -305,20 +307,20 @@ void spellchecker :: insert_shortcut_file(const string& shortcut_filename){
         short_cut[key_word] = ans_word;
     }
     
-    shortcutfile.close();
+    shortcutfile.close(); // close file
     return;
 }
 
 string spellchecker :: replace_shortcut(const string& word){
-    return short_cut[word];
+    return short_cut[word]; // return full form of shortcut
 }
 
 bool spellchecker :: is_in_shortcut(const string& word){
     if(short_cut[word] != ""){
-        return true;
+        return true; // return true if it exsit in shortcut file
     }
 
-    return false;
+    return false;  // return false if it not exsit in shortcut file
 }
 
 
@@ -348,7 +350,9 @@ int Distance(const string& str1 , const string& str2){
             else {
                 // If characters are different, find the minimum of the three neighboring cells
                 // and add one to represent the minimum edit distance required
-                dis[i][j] = 1 + min({ dis[i-1][j], dis[i][j-1], dis[i-1][j-1] });
+                dis[i][j] = 1 + min({ dis[i-1][j],
+                                      dis[i][j-1],
+                                      dis[i-1][j-1] });
             }
         }
     }
@@ -356,5 +360,4 @@ int Distance(const string& str1 , const string& str2){
     // Return the Levenshtein distance between the two strings
     return dis[n][m];
 }
-
 
