@@ -1,26 +1,85 @@
-#include "dictionary.h"
+#include <iostream>
 #include <string>
+#include "dictionary2.h"
 
-int main()
-{
-    // create object of class and call constructor
+#ifdef _WIN32
+#include <conio.h>
+#define CLEAR_SCREEN "cls"
+#else
+#include <unistd.h>
+#define CLEAR_SCREEN "clear"
+#endif
+
+using namespace std;
+
+int main() {
     spellchecker f1;
+    int choice;
 
-    // take shortcut and full form string from user...
-    string shortcut_key;
-    string full_form;
-    getline(cin, shortcut_key);
-    getline(full_form);
-    f1.insert_shortcut_word("shortcut_key","full_form");
-    
-    // Get input file name from user
-    cout << "Enter File Name to check spelling\n";
-    string file_name;
-    getline(cin, file_name);
-    cout << " ~> Following underlined words are wrong words\n";
-    f1.checking_file("input.txt");
-    cout << " ~> wrong words have been corrected in the " << file_name << " yon can check in the file \n";
-    f1.replace_wrong_spell("input.txt");
+    do {
+        cout << "\033[2J\033[H"; // ANSI escape sequence to clear screen
+        cout << bluelineON <<"\n** Spellchecker Menu **\n" << bluelineOFF;
+        cout << "1. Check Spelling in a File and replace wrong words\n";
+        cout << "2. Add your word in dictonary\n";
+        cout << "3. Add a Shortcut\n";
+        cout << "4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+        cin.ignore(); // Clear input buffer
+
+        switch (choice) {
+            case 1: {
+                cout << "Enter File Name to check spelling: ";
+                string file_name;
+                // cin.ignore(); // Clear input buffer
+                getline(cin, file_name);
+                cout << redlineON << " ~> Following underlined words are wrong words\n" << redlineOFF;
+                int errors = f1.checking_file(file_name);
+                if (errors == -1) {
+                    cerr << redlineON << "Error opening file.\n" << redlineOFF;
+                } else {
+                    cout << errors << " Misspelled words found.\n";
+                }
+                cout << " ~> wrong words have been corrected in the " << file_name << " you can check in the file\n";
+                f1.replace_spell(file_name);
+                break;
+            }
+            case 2: {
+                // take word from user to add in dictonary
+                string word;
+                cout << "ENTER WORD YOU WANTED TO INSERT - " << endl;
+                cin>>word;
+                // call function to add word in dictonary
+               f1.insert_spell(word);
+               cout << "ENTERED WORD ADDED SUCCESSFULLY !!" << endl;
+                break;
+            }
+            // case 3 for add short cut word for some word..
+            case 3: {
+                cout << bluelineON << "Enter the short cut key and full form of key: ";
+                string shortcut_key, full_form;
+                cin.ignore(); // Clear input buffer
+                getline(cin, shortcut_key);
+                getline(cin, full_form);
+                f1.insert_shortcut_word(shortcut_key, full_form);
+                break;
+            }
+            // case for left menu.
+            case 4: {
+                cout << yellowlineON << "Exiting this menu\n" << yellowlineOFF;
+                break;
+            }
+            // default case for invalid choice...
+            default: {
+                cout << redlineON << "Invalid choice. Please try again.\n" << redlineOFF;
+            }
+        }
+        if(choice != 4){
+            cout << "Press Enter to continue...";
+            cin.ignore(); // Clear input buffer
+            cin.get();
+        }
+    } while (choice != 4);
 
     return 0;
 }
