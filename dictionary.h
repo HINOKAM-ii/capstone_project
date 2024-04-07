@@ -194,7 +194,7 @@ int spellchecker :: checking_file(const string& filename){
 void spellchecker :: replace_spell(const string& file_name){
     
     ifstream input(file_name);
-
+    // if file does not exist
     if (!input.is_open()) {
         cerr << redlineON <<" -> Error: Unable to open input file: <- " << file_name << redlineOFF << endl;
         return;
@@ -207,7 +207,7 @@ void spellchecker :: replace_spell(const string& file_name){
         return;
     }
 
-    char c;
+    char c;    // declare character and string
     string word = "";
     while (input.get(c)) {
         if(c >= 'a' && c <= 'z')
@@ -324,28 +324,36 @@ bool spellchecker :: is_in_shortcut(const string& word){
 
 //write definition of distance based of Levenshtein algorithm
 int Distance(const string& str1 , const string& str2){
+    // Get the lengths of the input strings
     int n = str1.size();
     int m = str2.size();
 
-    int dis[n+1][m+1]; // declare array for dynamic programming
+    // Declare array for dynamic programming
+    int dis[n+1][m+1];
 
-    for(int i = 0 ; i <= n ; i++) dis[i][0] = i;   
+    // Initialize the first row of the array
+    for(int i = 0 ; i <= n ; i++) 
+        dis[i][0] = i;   
        
-    for(int i = 0 ; i <= m ; i++) dis[0][i] = i;
+    // Initialize the first column of the array
+    for(int i = 0 ; i <= m ; i++) 
+        dis[0][i] = i;
 
+    // Iterate through each character of both strings
     for (int i = 1; i <= n; i++){
-
         for (int j = 1; j <= m; j++){
+            // If the characters at the current positions are the same
             if(str1[i - 1] == str2[j - 1]) 
-                dis[i][j] = dis[i-1][j-1];
-            else{
-                dis[i][j] = 1 + min( { dis[i-1][j] ,
-                                       dis[i][j-1] ,
-                                       dis[i-1][j-1] } );
+                dis[i][j] = dis[i-1][j-1]; // No additional edit needed
+            else {
+                // If characters are different, find the minimum of the three neighboring cells
+                // and add one to represent the minimum edit distance required
+                dis[i][j] = 1 + min({ dis[i-1][j], dis[i][j-1], dis[i-1][j-1] });
             }
         }
     }
     
+    // Return the Levenshtein distance between the two strings
     return dis[n][m];
 }
 
