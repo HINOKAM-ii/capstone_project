@@ -62,7 +62,7 @@ void spellchecker :: insert_spell(const string& word){
     dictionary[word] = true;
 } 
 
-//function definition of insert our neew spell to dictionary
+//function definition of insert our new spell to dictionary
 void spellchecker :: insert_spell_to_dictionary(const string& word){
     ofstream fout(main_dictionary , ios :: app); // open file with append mode
     fout << word << endl;
@@ -92,7 +92,7 @@ void spellchecker :: insert_dictionary(const string& dictionary_name){
     cout << redlineON <<" - dictionary is not found\n" << redlineOFF;
 }
 
-//function definition of is in dictionary
+//function definition of is_in_dictionary
 bool spellchecker :: is_in_dictionary(const string& word){
     return dictionary[word];
 }
