@@ -22,6 +22,8 @@ class spellchecker{
 
     void insert_spell(const string& word);  //function to add word to store in dictionary
 
+    void insert_spell_to_dictionary(const string& word);  // add following word to our main dictionary
+
     void insert_dictionary(const string& dictionary_name);  // function to add whole dictionary
 
     bool is_in_dictionary(const string& word); // function to check that given word is in dictionary
@@ -60,6 +62,12 @@ void spellchecker :: insert_spell(const string& word){
     dictionary[word] = true;
 } 
 
+//function definition of insert our neew spell to dictionary
+void spellchecker :: insert_spell_to_dictionary(const string& word){
+    ofstream fout(main_dictionary , ios :: app); // open file with append mode
+    fout << word << endl;
+    fout.close(); // close file
+}
 
 //function definition of insert dictionary
 void spellchecker :: insert_dictionary(const string& dictionary_name){
