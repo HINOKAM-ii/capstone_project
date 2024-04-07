@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "dictionary.h"
+#include "dictionary2.h"
 
 #ifdef _WIN32
 #include <conio.h>
@@ -31,7 +31,10 @@ int main() {
             case 1: {
                 cout << "Enter File Name to check spelling: ";
                 string file_name;
+                cout << yellowlineON ;
                 getline(cin, file_name);
+                cout << yellowlineOFF;
+
                 cout << redlineON << " ~> Following underlined words are wrong words\n" << redlineOFF;
                 int errors = f1.checking_file(file_name);
                 if (errors == -1) {
@@ -47,7 +50,9 @@ int main() {
                 // take word from user to add in dictonary
                 string word;
                 cout << "ENTER WORD YOU WANTED TO INSERT - " << endl;
+                cout << yellowlineON ;
                 cin>>word;
+                cout << yellowlineOFF;
                 // call function to add word in dictonary
                 f1.insert_spell(word);
                 f1.insert_spell_to_dictionary(word);
@@ -56,11 +61,15 @@ int main() {
             }
             // case 3 for add short cut word for some word..
             case 3: {
-                cout << bluelineON << "Enter the short cut key and full form of key: ";
+                cout << "Enter the short cut key: ";
                 string shortcut_key, full_form;
-                cin.ignore(); // Clear input buffer
+                cout << yellowlineON ;
                 getline(cin, shortcut_key);
+                cout << yellowlineOFF;
+                cout << "Enter full form: ";
+                cout << yellowlineON ;
                 getline(cin, full_form);
+                cout << yellowlineOFF;
                 f1.insert_shortcut_word(shortcut_key, full_form);
                 break;
             }
@@ -83,3 +92,4 @@ int main() {
 
     return 0;
 }
+
