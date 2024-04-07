@@ -42,8 +42,8 @@ int main() {
                 } else {
                     cout << errors << " Misspelled words found.\n";
                 }
-                cout << " ~> wrong words have been corrected in the " << file_name << " you can check in the file\n";
                 f1.replace_spell(file_name);
+                cout << " ~> wrong words have been corrected in the " << file_name << " you can check in the file\n";
                 break;
             }
             case 2: {
