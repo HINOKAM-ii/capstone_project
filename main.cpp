@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "dictionary2.h"
+#include "dictionary.h"
 
 #ifdef _WIN32
 #include <conio.h>
