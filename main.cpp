@@ -22,7 +22,7 @@ int main() {
         cout << "1. Check Spelling in a File and replace wrong words\n";
         cout << "2. Add your word in dictonary\n";
         cout << "3. Add a Shortcut\n";
-        cout << "4. Exit\n";
+        cout << redlineON << "4. Exit\n" << redlineOFF;
         cout << "Enter your choice: ";
         cin >> choice;
         cin.ignore(); // Clear input buffer
@@ -31,7 +31,6 @@ int main() {
             case 1: {
                 cout << "Enter File Name to check spelling: ";
                 string file_name;
-                // cin.ignore(); // Clear input buffer
                 getline(cin, file_name);
                 cout << redlineON << " ~> Following underlined words are wrong words\n" << redlineOFF;
                 int errors = f1.checking_file(file_name);
@@ -50,8 +49,9 @@ int main() {
                 cout << "ENTER WORD YOU WANTED TO INSERT - " << endl;
                 cin>>word;
                 // call function to add word in dictonary
-               f1.insert_spell(word);
-               cout << "ENTERED WORD ADDED SUCCESSFULLY !!" << endl;
+                f1.insert_spell(word);
+                f1.insert_spell_to_dictionary(word);
+                cout << greenlineON << "ENTERED WORD ADDED SUCCESSFULLY !!" << greenlineOFF << endl;
                 break;
             }
             // case 3 for add short cut word for some word..
